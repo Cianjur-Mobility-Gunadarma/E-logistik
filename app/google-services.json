@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1059984179852",
+    "project_id": "elogistik-108ea",
+    "storage_bucket": "elogistik-108ea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059984179852:android:bcb644820a8ed9f095f1a9",
+        "android_client_info": {
+          "package_name": "com.cianjur.elogistik"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABNK3SPV_lrixrDTq812W6kjeWCdYiVdk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

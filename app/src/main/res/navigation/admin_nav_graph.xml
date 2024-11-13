@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/admin_nav_graph"
+    app:startDestination="@id/ordersFragment">
+
+    <fragment
+        android:id="@+id/ordersFragment"
+        android:name="com.cianjur.elogistik.ui.jadwal.JadwalFragment"
+        android:label="Daftar Pesanan">
+    </fragment>
+
+    <fragment
+        android:id="@+id/usersFragment"
+        android:name="com.cianjur.elogistik.ui.admin.UsersFragment"
+        android:label="Daftar Pengguna">
+    </fragment>
+
+    <fragment
+        android:id="@+id/createUserFragment"
+        android:name="com.cianjur.elogistik.ui.admin.CreateUserFragment"
+        android:label="Tambah Pengguna">
+    </fragment>
+</navigation>

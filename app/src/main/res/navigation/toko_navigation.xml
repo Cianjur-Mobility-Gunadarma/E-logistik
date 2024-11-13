@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toko_navigation"
+    app:startDestination="@id/navigation_pesanan">
+
+    <fragment
+        android:id="@+id/navigation_pesanan"
+        android:name="com.cianjur.elogistik.ui.jadwal.JadwalFragment"
+        android:label="Pesanan" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.cianjur.elogistik.ui.profile.ProfileFragment"
+        android:label="Profile" />
+</navigation> 

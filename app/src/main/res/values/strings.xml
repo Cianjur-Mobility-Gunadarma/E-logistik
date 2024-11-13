@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">elogistik</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="pesan">Pesan</string>
+    <string name="jadwal">Buat Jadwal</string>
+    <string name="title_activity_toko">TokoActivity</string>
+</resources>
