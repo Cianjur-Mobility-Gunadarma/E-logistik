@@ -4,20 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="16dp"
-    tools:context=".ui.profile.ProfileFragment">
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="24sp"
+        android:textColor="@color/primary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/poppins_bold"
-        android:textSize="24sp"
-        android:textColor="@color/primary"
-        tools:text="Halo, Ferdinand"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/poppins_medium"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/titleText"
+        tools:text="Halo, User" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
@@ -29,6 +38,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/welcomeText" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/profileImage"/>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nikLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -36,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:hint="NIK"
-        app:layout_constraintTop_toBottomOf="@id/profileImage">
+        app:layout_constraintTop_toBottomOf="@id/progressBar">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/nikInput"
@@ -59,7 +77,7 @@
             android:id="@+id/namaInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName" />
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -100,7 +118,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Simpan Perubahan"
+        android:text="Edit Profil"
         android:textAllCaps="false"
         app:layout_constraintTop_toBottomOf="@id/alamatLayout" />
 

@@ -65,6 +65,7 @@ class ProfileFragment : Fragment() {
         binding.apply {
             nikInput.isEnabled = enabled
             namaInput.isEnabled = enabled
+            phoneInput.isEnabled = enabled
             alamatInput.isEnabled = enabled
             profileImage.isClickable = enabled
             
@@ -73,6 +74,7 @@ class ProfileFragment : Fragment() {
             // Set background warna untuk mode tampilan
             nikInput.setBackgroundResource(if (enabled) R.drawable.edit_text_background else R.drawable.view_background)
             namaInput.setBackgroundResource(if (enabled) R.drawable.edit_text_background else R.drawable.view_background)
+            phoneInput.setBackgroundResource(if (enabled) R.drawable.edit_text_background else R.drawable.view_background)
             alamatInput.setBackgroundResource(if (enabled) R.drawable.edit_text_background else R.drawable.view_background)
         }
     }
@@ -97,7 +99,11 @@ class ProfileFragment : Fragment() {
         val userId = auth.currentUser?.uid ?: return
 
         if (selectedImageUri != null) {
-            val ref = storage.reference.child("profile_images/$userId.jpg")
+            // Tampilkan loading
+            binding.progressBar.visibility = View.VISIBLE
+            binding.btnSimpan.isEnabled = false
+
+            val ref = storage.reference.child("profile_images/$userId/profile.jpg")
 
             ref.putFile(selectedImageUri!!)
                 .addOnSuccessListener { taskSnapshot ->
@@ -105,8 +111,14 @@ class ProfileFragment : Fragment() {
                         saveProfileData(uri.toString())
                     }
                 }
-                .addOnFailureListener {
-                    Toast.makeText(context, "Gagal mengupload foto", Toast.LENGTH_SHORT).show()
+                .addOnFailureListener { e ->
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnSimpan.isEnabled = true
+                    Toast.makeText(context, "Gagal mengupload foto: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+                .addOnProgressListener { taskSnapshot ->
+                    val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount)
+                    binding.progressBar.progress = progress.toInt()
                 }
         } else {
             saveProfileData(null)
@@ -115,24 +127,44 @@ class ProfileFragment : Fragment() {
 
     private fun saveProfileData(photoUrl: String?) {
         val userId = auth.currentUser?.uid ?: return
-        val user = User(
-            id = userId,
-            nik = binding.nikInput.text.toString(),
-            nama = binding.namaInput.text.toString(),
-            alamat = binding.alamatInput.text.toString(),
-            photoUrl = photoUrl ?: "",
-            updatedAt = System.currentTimeMillis()
-        )
-
+        
         firestore.collection("user")
             .document(userId)
-            .set(user)
-            .addOnSuccessListener {
-                Toast.makeText(context, "Data berhasil disimpan", Toast.LENGTH_SHORT).show()
-                loadProfileData()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(context, "Gagal menyimpan data: ${e.message}", Toast.LENGTH_SHORT).show()
+            .get()
+            .addOnSuccessListener { document ->
+                val existingUser = document.toObject(User::class.java)
+                
+                val updates = hashMapOf<String, Any>(
+                    "nik" to binding.nikInput.text.toString(),
+                    "nama" to binding.namaInput.text.toString(),
+                    "phone" to binding.phoneInput.text.toString(),
+                    "alamat" to binding.alamatInput.text.toString(),
+                    "updatedAt" to System.currentTimeMillis()
+                )
+
+                if (photoUrl != null) {
+                    updates["photoUrl"] = photoUrl
+                }
+
+                existingUser?.type?.let {
+                    updates["type"] = it
+                }
+
+                firestore.collection("user")
+                    .document(userId)
+                    .update(updates)
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Data berhasil disimpan", Toast.LENGTH_SHORT).show()
+                        binding.progressBar.visibility = View.GONE
+                        binding.btnSimpan.isEnabled = true
+                        loadProfileData()
+                        setEditMode(false)
+                    }
+                    .addOnFailureListener { e ->
+                        binding.progressBar.visibility = View.GONE
+                        binding.btnSimpan.isEnabled = true
+                        Toast.makeText(context, "Gagal menyimpan data: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
     }
 
@@ -158,13 +190,17 @@ class ProfileFragment : Fragment() {
             welcomeText.text = "Halo, ${user.nama}"
             nikInput.setText(user.nik)
             namaInput.setText(user.nama)
+            phoneInput.setText(user.phone)
             alamatInput.setText(user.alamat)
 
             if (user.photoUrl.isNotEmpty()) {
                 Glide.with(this@ProfileFragment)
                     .load(user.photoUrl)
                     .placeholder(R.drawable.default_profile)
+                    .error(R.drawable.default_profile)
                     .into(profileImage)
+            } else {
+                profileImage.setImageResource(R.drawable.default_profile)
             }
         }
     }
@@ -187,6 +223,16 @@ class ProfileFragment : Fragment() {
             isValid = false
         } else {
             binding.namaLayout.error = null
+        }
+
+        if (binding.phoneInput.text.toString().isEmpty()) {
+            binding.phoneLayout.error = "Nomor HP tidak boleh kosong"
+            isValid = false
+        } else if (binding.phoneInput.text.toString().length < 10) {
+            binding.phoneLayout.error = "Nomor HP tidak valid"
+            isValid = false
+        } else {
+            binding.phoneLayout.error = null
         }
 
         if (binding.alamatInput.text.toString().isEmpty()) {

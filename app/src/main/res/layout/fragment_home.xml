@@ -4,22 +4,147 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".ui.home.HomeFragment">
 
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Petani"
+        android:textSize="24sp"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:id="@+id/subtitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pemesanan logistik"
+        android:textSize="16sp"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/titleText"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/lokasiLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:hint="Lokasi pengiriman"
+        app:layout_constraintTop_toBottomOf="@id/subtitleText">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/lokasiInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPostalAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/kebutuhanLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Masukan kebutuhan logistik"
+        app:layout_constraintTop_toBottomOf="@id/lokasiLayout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/kebutuhanInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/jumlahLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Masukan berapa banyak kebutuhan"
+        app:layout_constraintTop_toBottomOf="@id/kebutuhanLayout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/jumlahInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/pesanLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Pesan tambahan"
+        app:counterEnabled="true"
+        app:counterMaxLength="200"
+        app:layout_constraintTop_toBottomOf="@id/jumlahLayout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/pesanInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:maxLines="4"
+            android:minLines="2"
+            android:gravity="top"
+            android:scrollbars="vertical" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/jadwalLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Masukan jadwal pengiriman"
+        app:layout_constraintTop_toBottomOf="@id/pesanLayout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/jadwalInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tokoLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Pilih toko yang terdekat"
+        app:layout_constraintTop_toBottomOf="@id/jadwalLayout">
+
+        <AutoCompleteTextView
+            android:id="@+id/tokoDropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/pesanButton"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
         android:fontFamily="@font/poppins_extrabold"
-        android:text="@string/pesan"
+        android:text="Pesan"
         android:textAllCaps="false"
-        android:layout_marginBottom="100dp"
         android:textColor="@color/white"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tokoLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

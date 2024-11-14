@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toko_navigation"
-    app:startDestination="@id/navigation_pesanan">
+    app:startDestination="@+id/navigation_pesanan">
 
     <fragment
         android:id="@+id/navigation_pesanan"
-        android:name="com.cianjur.elogistik.ui.jadwal.JadwalFragment"
-        android:label="Pesanan" />
+        android:name="com.cianjur.elogistik.ui.toko.PesananTokoFragment"
+        android:label="Pesanan"
+        tools:layout="@layout/fragment_pesanan_toko">
+        <action
+            android:id="@+id/action_navigation_pesanan_to_detailPesananFragment"
+            app:destination="@id/detailPesananFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.cianjur.elogistik.ui.profile.ProfileFragment"
-        android:label="Profile" />
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/detailPesananFragment"
+        android:name="com.cianjur.elogistik.ui.detail.DetailPesananFragment"
+        android:label="Detail Pesanan"
+        tools:layout="@layout/fragment_detail_pesanan">
+        <argument
+            android:name="pesananId"
+            app:argType="string" />
+        <argument
+            android:name="isToko"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
 </navigation> 

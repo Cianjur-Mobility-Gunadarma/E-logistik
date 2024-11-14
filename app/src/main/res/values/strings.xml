@@ -6,4 +6,6 @@
     <string name="pesan">Pesan</string>
     <string name="jadwal">Buat Jadwal</string>
     <string name="title_activity_toko">TokoActivity</string>
+    <string name="profile">Profile</string>
+    <string name="pesanan">Pesanan</string>
 </resources>

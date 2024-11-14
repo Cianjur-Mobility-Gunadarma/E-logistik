@@ -4,55 +4,81 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="4dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    android:layout_margin="10dp"
+    android:elevation="10dp"
+    app:cardCornerRadius="15dp"
+    app:cardBackgroundColor="@color/primary">
 
     <RelativeLayout
+        android:id="@+id/item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@android:color/white"
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/namaPetani"
-            android:layout_width="wrap_content"
+            android:id="@+id/todoTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_bold"
-            android:textSize="16sp"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/todoCategory"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_extrabold"
+            android:maxLines="1"
             android:textColor="@color/primary"
-            tools:text="Nama Petani" />
+            android:textSize="20sp"
+            tools:text="Kebutuhan Logistik" />
 
         <TextView
-            android:id="@+id/tanggalPesanan"
-            android:layout_width="wrap_content"
+            android:id="@+id/todoDescription"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/namaPetani"
+            android:layout_below="@+id/todoTitle"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="4dp"
+            android:ellipsize="end"
             android:fontFamily="@font/poppins_medium"
-            tools:text="12 Maret 2024" />
+            android:maxLines="1"
+            android:textColor="@color/primary"
+            android:textSize="16sp"
+            tools:text="Lokasi Pengiriman" />
 
         <TextView
-            android:id="@+id/statusPesanan"
+            android:id="@+id/todoCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:background="@color/primary"
-            android:paddingHorizontal="12dp"
+            android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
+            android:fontFamily="@font/poppins_medium"
             android:textColor="@color/white"
-            tools:text="Menunggu" />
+            android:textSize="14sp"
+            tools:text="Status" />
 
-        <Button
-            android:id="@+id/btnDetail"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        <TextView
+            android:id="@+id/textDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tanggalPesanan"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="8dp"
-            android:text="Lihat Detail"
-            android:textAllCaps="false" />
+            android:layout_below="@+id/todoDescription"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="Jadwal Pengiriman:"
+            android:textColor="@color/primary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/todoDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textDate"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            tools:text="22 November 2024" />
 
     </RelativeLayout>
 

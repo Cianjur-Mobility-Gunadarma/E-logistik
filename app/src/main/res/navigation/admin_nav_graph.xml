@@ -1,24 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/admin_nav_graph"
-    app:startDestination="@id/ordersFragment">
-
-    <fragment
-        android:id="@+id/ordersFragment"
-        android:name="com.cianjur.elogistik.ui.jadwal.JadwalFragment"
-        android:label="Daftar Pesanan">
-    </fragment>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/admin_navigation"
+    app:startDestination="@id/usersFragment">
 
     <fragment
         android:id="@+id/usersFragment"
         android:name="com.cianjur.elogistik.ui.admin.UsersFragment"
-        android:label="Daftar Pengguna">
+        android:label="Daftar Pengguna"
+        tools:layout="@layout/fragment_users">
+
+        <action
+            android:id="@+id/action_usersFragment_to_createUserFragment"
+            app:destination="@id/createUserFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/createUserFragment"
         android:name="com.cianjur.elogistik.ui.admin.CreateUserFragment"
-        android:label="Tambah Pengguna">
+        android:label="Tambah Pengguna"
+        tools:layout="@layout/fragment_create_user" />
+
+    <fragment
+        android:id="@+id/ordersFragment"
+        android:name="com.cianjur.elogistik.ui.admin.OrdersFragment"
+        android:label="Daftar Pesanan"
+        tools:layout="@layout/fragment_orders">
+
+        <action
+            android:id="@+id/action_ordersFragment_to_detailPesananFragment"
+            app:destination="@id/detailPesananFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/detailPesananFragment"
+        android:name="com.cianjur.elogistik.ui.detail.DetailPesananFragment"
+        android:label="Detail Pesanan"
+        tools:layout="@layout/fragment_detail_pesanan">
+
+        <argument
+            android:name="pesananId"
+            app:argType="string" />
+        <argument
+            android:name="isAdmin"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
+
 </navigation>
