@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="primary">#1342C8</color>
-    <color name="whatsapp_green">#25D366</color>
-    <color name="red">#DC3545</color>
-    <color name="status_waiting">#FFA000</color>     <!-- Orange -->
-    <color name="status_process">#1976D2</color>     <!-- Blue -->
-    <color name="status_shipped">#7B1FA2</color>     <!-- Purple -->
-    <color name="status_completed">#388E3C</color>   <!-- Green -->
-    <color name="status_cancelled">#D32F2F</color>   <!-- Red -->
+    <!-- Warna Utama -->
+    <color name="primary">#2E7D32</color>          <!-- Hijau - Warna utama -->
+    <color name="primary_dark">#1B5E20</color>     <!-- Hijau Gelap - Header & Status bar -->
+    <color name="primary_light">#81C784</color>    <!-- Hijau Terang - Highlight -->
+    
+    <!-- Warna Aksen -->
+    <color name="accent">#FF8F00</color>           <!-- Orange - Tombol & Highlight -->
+    <color name="accent_dark">#F57C00</color>      <!-- Orange Gelap - Pressed state -->
+    
+    <!-- Warna Status -->
+    <color name="status_waiting">#FFA000</color>   <!-- Orange - Menunggu -->
+    <color name="status_process">#1976D2</color>   <!-- Biru - Proses -->
+    <color name="status_shipped">#7B1FA2</color>   <!-- Ungu - Dikirim -->
+    <color name="status_completed">#388E3C</color> <!-- Hijau - Selesai -->
+    <color name="status_cancelled">#D32F2F</color> <!-- Merah - Dibatalkan -->
+    
+    <!-- Warna Teks -->
+    <color name="text_primary">#212121</color>     <!-- Abu Gelap - Teks Utama -->
+    <color name="text_secondary">#757575</color>   <!-- Abu - Teks Sekunder -->
+    <color name="text_light">#FFFFFF</color>       <!-- Putih - Teks di Background Gelap -->
+    
+    <!-- Warna Dasar -->
+    <color name="white">#FFFFFF</color>
+    <color name="red">#FF0000</color>
+    <color name="whatsapp_green">#3EF447</color>
+    <color name="black">#000000</color>
+    <color name="background">#FFFFFF</color>       <!-- Background Utama -->
+    <color name="divider">#EEEEEE</color>         <!-- Garis Pemisah -->
 </resources>

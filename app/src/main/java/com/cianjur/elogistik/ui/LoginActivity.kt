@@ -15,6 +15,11 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import android.view.animation.AnimationUtils
+import android.view.animation.Animation
+import com.cianjur.elogistik.R
+import androidx.appcompat.app.AppCompatDelegate
+import android.view.View
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -22,9 +27,13 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_animation)
+        binding.logoImage.startAnimation(slideAnimation)
 
         auth = Firebase.auth
         db = Firebase.firestore
@@ -38,24 +47,26 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
+        supportActionBar?.hide()
+
         binding.loginButton.setOnClickListener {
             val email = binding.usernameInput.text.toString()
             val password = binding.passwordInput.text.toString()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                binding.loginButton.isEnabled = false
+                setLoading(true)
                 
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener { authResult ->
                         authResult.user?.uid?.let { userId ->
                             checkUserTypeAndRedirect(userId)
                         } ?: run {
-                            binding.loginButton.isEnabled = true
+                            setLoading(false)
                             Toast.makeText(this, "Error: User ID tidak ditemukan", Toast.LENGTH_SHORT).show()
                         }
                     }
                     .addOnFailureListener { e ->
-                        binding.loginButton.isEnabled = true
+                        setLoading(false)
                         Toast.makeText(this, "Login gagal: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
             } else {
@@ -68,7 +79,7 @@ class LoginActivity : AppCompatActivity() {
         db.collection("user").document(userId)
             .get()
             .addOnSuccessListener { document ->
-                binding.loginButton.isEnabled = true
+                setLoading(false)
                 
                 if (document.exists()) {
                     try {
@@ -82,27 +93,48 @@ class LoginActivity : AppCompatActivity() {
                                 finish()
                             }
                             "admin" -> {
-                                startActivity(Intent(this, AdminActivity::class.java))
-                                finish()
+                                auth.currentUser?.getIdToken(true)?.addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        startActivity(Intent(this, AdminActivity::class.java))
+                                        finish()
+                                    } else {
+                                        showError("Gagal memperbarui sesi. Silakan login kembali.")
+                                        auth.signOut()
+                                    }
+                                }
                             }
                             else -> {
-                                Toast.makeText(this, "Tipe user tidak valid", Toast.LENGTH_SHORT).show()
+                                showError("Tipe user tidak valid")
                                 auth.signOut()
                             }
                         }
                     } catch (e: Exception) {
-                        Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                        showError("Error: ${e.message}")
                         auth.signOut()
                     }
                 } else {
-                    Toast.makeText(this, "Data user tidak ditemukan", Toast.LENGTH_SHORT).show()
+                    showError("Data user tidak ditemukan")
                     auth.signOut()
                 }
             }
             .addOnFailureListener { e ->
-                binding.loginButton.isEnabled = true
-                Toast.makeText(this, "Error akses: ${e.message}", Toast.LENGTH_SHORT).show()
+                setLoading(false)
+                showError("Error akses: ${e.message}")
                 auth.signOut()
             }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        binding.apply {
+            loginButton.isEnabled = !isLoading
+            loginProgress.visibility = if (isLoading) View.VISIBLE else View.GONE
+            loginButton.text = if (isLoading) "" else "Masuk"
+            usernameInput.isEnabled = !isLoading
+            passwordInput.isEnabled = !isLoading
+        }
+    }
+
+    private fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }

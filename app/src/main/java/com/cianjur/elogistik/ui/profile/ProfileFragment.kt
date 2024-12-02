@@ -16,6 +16,9 @@ import android.content.Intent
 import android.app.Activity
 import android.net.Uri
 import com.cianjur.elogistik.R
+import androidx.activity.OnBackPressedCallback
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.cianjur.elogistik.ui.LoginActivity
 
 class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
@@ -26,6 +29,7 @@ class ProfileFragment : Fragment() {
     private var selectedImageUri: Uri? = null
     private val PICK_IMAGE_REQUEST = 1
     private var isEditMode = false
+    private var backPressedCallback: OnBackPressedCallback? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -56,6 +60,10 @@ class ProfileFragment : Fragment() {
                 } else {
                     setEditMode(true)
                 }
+            }
+
+            logoutButton.setOnClickListener {
+                showLogoutConfirmation()
             }
         }
     }
@@ -95,13 +103,44 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun setLoading(isLoading: Boolean) {
+        binding.apply {
+            loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
+            btnSimpan.isEnabled = !isLoading
+            // Disable semua input saat loading
+            profileImage.isEnabled = !isLoading
+            nikInput.isEnabled = !isLoading
+            namaInput.isEnabled = !isLoading
+            phoneInput.isEnabled = !isLoading
+            alamatInput.isEnabled = !isLoading
+        }
+
+
+        if (isLoading) {
+
+            if (backPressedCallback == null) {
+                backPressedCallback = object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+        
+                    }
+                }
+                requireActivity().onBackPressedDispatcher.addCallback(
+                    viewLifecycleOwner,
+                    backPressedCallback!!
+                )
+            }
+        } else {
+            // Hapus callback jika loading selesai
+            backPressedCallback?.remove()
+            backPressedCallback = null
+        }
+    }
+
     private fun uploadImageAndSaveData() {
         val userId = auth.currentUser?.uid ?: return
 
         if (selectedImageUri != null) {
-            // Tampilkan loading
-            binding.progressBar.visibility = View.VISIBLE
-            binding.btnSimpan.isEnabled = false
+            setLoading(true) // Tampilkan loading overlay
 
             val ref = storage.reference.child("profile_images/$userId/profile.jpg")
 
@@ -112,8 +151,7 @@ class ProfileFragment : Fragment() {
                     }
                 }
                 .addOnFailureListener { e ->
-                    binding.progressBar.visibility = View.GONE
-                    binding.btnSimpan.isEnabled = true
+                    setLoading(false) // Sembunyikan loading overlay
                     Toast.makeText(context, "Gagal mengupload foto: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
                 .addOnProgressListener { taskSnapshot ->
@@ -154,15 +192,13 @@ class ProfileFragment : Fragment() {
                     .document(userId)
                     .update(updates)
                     .addOnSuccessListener {
+                        setLoading(false) // Sembunyikan loading overlay
                         Toast.makeText(context, "Data berhasil disimpan", Toast.LENGTH_SHORT).show()
-                        binding.progressBar.visibility = View.GONE
-                        binding.btnSimpan.isEnabled = true
                         loadProfileData()
                         setEditMode(false)
                     }
                     .addOnFailureListener { e ->
-                        binding.progressBar.visibility = View.GONE
-                        binding.btnSimpan.isEnabled = true
+                        setLoading(false) // Sembunyikan loading overlay
                         Toast.makeText(context, "Gagal menyimpan data: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
             }
@@ -243,5 +279,32 @@ class ProfileFragment : Fragment() {
         }
 
         return isValid
+    }
+
+    private fun showLogoutConfirmation() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Logout")
+            .setMessage("Apakah Anda yakin ingin keluar?")
+            .setPositiveButton("Ya") { _, _ ->
+                performLogout()
+            }
+            .setNegativeButton("Tidak", null)
+            .show()
+    }
+
+    private fun performLogout() {
+        auth.signOut()
+        // Redirect ke LoginActivity
+        startActivity(Intent(requireContext(), LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
+        requireActivity().finish()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        backPressedCallback?.remove()
+        backPressedCallback = null
+        _binding = null
     }
 }

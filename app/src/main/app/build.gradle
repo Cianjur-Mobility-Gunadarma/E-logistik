@@ -1,0 +1,12 @@
+android {
+    // ...
+    buildTypes {
+        release {
+            // ...
+            resourceConfigurations.exclude 'night'
+        }
+        debug {
+            resourceConfigurations.exclude 'night'
+        }
+    }
+} 
