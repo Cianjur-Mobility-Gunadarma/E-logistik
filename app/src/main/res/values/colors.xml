@@ -4,6 +4,8 @@
     <color name="primary">#2E7D32</color>          <!-- Hijau - Warna utama -->
     <color name="primary_dark">#1B5E20</color>     <!-- Hijau Gelap - Header & Status bar -->
     <color name="primary_light">#81C784</color>    <!-- Hijau Terang - Highlight -->
+    <color name="logo_color">#198754</color>    <!-- Hijau Terang - Highlight -->
+
     
     <!-- Warna Aksen -->
     <color name="accent">#FF8F00</color>           <!-- Orange - Tombol & Highlight -->

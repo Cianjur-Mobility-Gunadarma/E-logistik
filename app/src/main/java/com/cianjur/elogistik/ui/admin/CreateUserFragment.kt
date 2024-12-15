@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.cianjur.elogistik.databinding.FragmentCreateUserBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.cianjur.elogistik.ui.LoginActivity
 
@@ -22,6 +23,7 @@ class CreateUserFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    private var userListener: ListenerRegistration? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +40,30 @@ class CreateUserFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
+        checkAdminRole()
         setupUI()
+    }
+
+    private fun checkAdminRole() {
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            navigateToLogin()
+            return
+        }
+
+        db.collection("user").document(currentUser.uid)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document == null || document.data == null || 
+                    document.getString("type") != "admin") {
+                    showErrorMessage(Exception("Anda tidak memiliki akses admin"))
+                    performLogout()
+                }
+            }
+            .addOnFailureListener { e ->
+                showErrorMessage(e)
+                performLogout()
+            }
     }
 
     private fun setupUI() {
@@ -151,51 +176,91 @@ class CreateUserFragment : Fragment() {
         }
     }
 
+    private fun performLogout() {
+        try {
+            // Nonaktifkan UI terlebih dahulu
+            _binding?.let {
+                it.buttonCreateUser.isEnabled = false
+                it.logoutButton.isEnabled = false
+            }
+            
+            // Clear semua data
+            activity?.let { fragmentActivity ->
+                fragmentActivity.viewModelStore.clear()
+            }
+            
+            // Logout dari Firebase Auth
+            auth.signOut()
+            
+            // Tampilkan toast berhasil logout
+            if (isAdded) {
+                Toast.makeText(requireContext(), "Berhasil logout", Toast.LENGTH_SHORT).show()
+            }
+            
+            // Navigasi ke LoginActivity dengan delay singkat
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (isAdded) {
+                    startActivity(Intent(requireContext(), LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                    requireActivity().finish()
+                }
+            }, 500) // Delay 500ms agar toast terlihat
+            
+        } catch (e: Exception) {
+            // Silent catch, langsung navigasi ke login
+            auth.signOut()
+            if (isAdded) {
+                Toast.makeText(requireContext(), "Berhasil logout", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(requireContext(), LoginActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                requireActivity().finish()
+            }
+        }
+    }
+
+    private fun navigateToLogin() {
+        if (!isAdded) return  // Cek apakah fragment masih attached
+        
+        try {
+            val intent = Intent(requireContext(), LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
+            requireActivity().finish()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private fun showLogoutConfirmation() {
+        if (!isAdded) return
+        
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Logout")
             .setMessage("Apakah Anda yakin ingin keluar?")
             .setPositiveButton("Ya") { _, _ ->
+                // Langsung logout tanpa menampilkan pesan
                 performLogout()
             }
             .setNegativeButton("Tidak", null)
             .show()
     }
 
-    private fun performLogout() {
-        try {
-            showSuccessMessage("Berhasil logout")
-            auth.signOut()
-            
-            Handler(Looper.getMainLooper()).postDelayed({
-                val intent = Intent(requireContext(), LoginActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
-                startActivity(intent)
-                requireActivity().finish()
-            }, 1000)
-        } catch (e: Exception) {
-            showErrorMessage(e)
-            // Force logout jika terjadi error
-            auth.signOut()
-            startActivity(Intent(requireContext(), LoginActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            })
-            requireActivity().finish()
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        try {
+            // Clear semua referensi
+            db.clearPersistence()
+            _binding = null
+        } catch (e: Exception) {
+            _binding = null
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        try {
-            _binding = null
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        _binding = null
     }
 }

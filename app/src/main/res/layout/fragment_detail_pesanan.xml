@@ -1,183 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Petani"
-        android:textSize="24sp"
-        android:textColor="@color/black"
-        android:fontFamily="@font/poppins_bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/subtitleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Jadwal pengiriman"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleText" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/statusCard"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/subtitleText">
+        android:padding="16dp">
 
         <TextView
-            android:id="@+id/statusText"
+            android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Status pesanan: Barang sedang di siapkan"
-            android:textColor="@color/primary"
-            android:textSize="16sp" />
-    </com.google.android.material.card.MaterialCardView>
+            android:text="Petani"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins_bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tanggalLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tanggal pengiriman:"
-        android:textStyle="bold"
-        android:layout_marginTop="24dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/statusCard" />
+        <TextView
+            android:id="@+id/subtitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jadwal pengiriman"
+            android:textSize="16sp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleText" />
 
-    <TextView
-        android:id="@+id/tanggalText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tanggalLabel" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/statusCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/subtitleText">
 
-    <TextView
-        android:id="@+id/alamatLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Alamat pengiriman:"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tanggalText" />
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Status pesanan: Barang sedang di siapkan"
+                android:textColor="@color/primary"
+                android:textSize="16sp" />
+        </com.google.android.material.card.MaterialCardView>
 
-    <TextView
-        android:id="@+id/alamatText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/alamatLabel" />
+        <TextView
+            android:id="@+id/petaniLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nama Petani:"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/statusCard" />
 
-    <TextView
-        android:id="@+id/barangLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Barang yang di pesan:"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/alamatText" />
+        <TextView
+            android:id="@+id/petaniText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/petaniLabel"
+            tools:text="Nama Petani" />
 
-    <TextView
-        android:id="@+id/barangText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barangLabel" />
+        <TextView
+            android:id="@+id/tanggalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tanggal pengiriman:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/petaniText" />
 
-    <TextView
-        android:id="@+id/jumlahLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Jumlah pesanan:"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barangText" />
+        <TextView
+            android:id="@+id/tanggalText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tanggalLabel" />
 
-    <TextView
-        android:id="@+id/jumlahText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/jumlahLabel" />
+        <TextView
+            android:id="@+id/alamatLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alamat pengiriman:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tanggalText" />
 
-    <TextView
-        android:id="@+id/tokoLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nama toko:"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/jumlahText" />
+        <TextView
+            android:id="@+id/alamatText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/alamatLabel" />
 
-    <TextView
-        android:id="@+id/tokoText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tokoLabel" />
+        <TextView
+            android:id="@+id/barangLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Barang dan Jumlah:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/alamatText" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/hubungiButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:backgroundTint="@color/whatsapp_green"
-        android:text="Hubungi toko melalui WA"
-        app:icon="@drawable/ic_whatsapp"
-        app:iconGravity="textStart"
-        app:layout_constraintTop_toBottomOf="@id/tokoText"
-        tools:layout_editor_absoluteX="25dp" />
+        <TextView
+            android:id="@+id/barangText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barangLabel" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/editButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Edit Pesanan"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/hubungiButton" />
+        <TextView
+            android:id="@+id/tokoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nama toko:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barangText" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/batalkanButton"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/red"
-        android:text="Batalkan Pesanan"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editButton"
-        app:layout_constraintVertical_bias="0.0"
-        app:strokeColor="@color/red"
-        tools:layout_editor_absoluteX="16dp" />
+        <TextView
+            android:id="@+id/tokoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tokoLabel" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/updateStatusButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Update Status"
-        android:layout_marginTop="16dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/statusText" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/alamatTokoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alamat:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tokoText" />
+
+        <TextView
+            android:id="@+id/alamatTokoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/alamatTokoLabel" />
+
+        <Button
+            android:id="@+id/buttonLihatLokasi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lihat Alamat"
+            android:drawableStart="@drawable/ic_maps"
+            android:drawablePadding="8dp"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/alamatTokoText"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/hubungiButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/whatsapp_green"
+            android:text="Hubungi toko melalui WA"
+            app:icon="@drawable/ic_whatsapp"
+            app:iconGravity="textStart"
+            app:layout_constraintTop_toBottomOf="@id/buttonLihatLokasi" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/editButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Edit Pesanan"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/hubungiButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/batalkanButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/red"
+            android:text="Batalkan Pesanan"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editButton"
+            app:layout_constraintVertical_bias="0.0"
+            app:strokeColor="@color/red"
+            tools:layout_editor_absoluteX="16dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/updateStatusButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update Status"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/statusText" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

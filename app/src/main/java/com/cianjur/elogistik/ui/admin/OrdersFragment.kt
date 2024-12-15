@@ -76,9 +76,27 @@ class OrdersFragment : Fragment() {
                 }
 
                 val pesananList = snapshots?.documents?.map { doc ->
+                    val kebutuhanText = try {
+                        when (val kebutuhanData = doc.get("kebutuhanList")) {
+                            is List<*> -> {
+                                kebutuhanData.joinToString(", ") { item ->
+                                    when (item) {
+                                        is Map<*, *> -> "${item["nama"]}: ${item["jumlah"]}"
+                                        is String -> item
+                                        else -> item.toString()
+                                    }
+                                }
+                            }
+                            is String -> kebutuhanData
+                            else -> ""
+                        }
+                    } catch (e: Exception) {
+                        doc.getString("kebutuhan") ?: ""
+                    }
+
                     PesananItem(
                         id = doc.id,
-                        title = "${doc.getString("kebutuhan")} (${doc.getLong("jumlah")} unit)",
+                        title = kebutuhanText,
                         description = "Toko: ${doc.getString("tokoNama")}\n" +
                                     "Lokasi: ${doc.getString("lokasi")}\n" +
                                     "Pesan: ${doc.getString("pesan") ?: "-"}",

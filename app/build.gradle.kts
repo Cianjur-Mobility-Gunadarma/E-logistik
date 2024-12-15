@@ -12,19 +12,30 @@ android {
         applicationId = "com.cianjur.elogistik"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("D:/elogistik/keystore/keystore.jks")
+            storePassword = "jamali"
+            keyAlias = "key0"
+            keyPassword = "jamali"
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -62,6 +73,10 @@ dependencies {
     annotationProcessor(libs.glide.compiler)
 
     implementation(libs.circleimageview)
+
+    //maps
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
     // Firebase
     implementation(platform(libs.firebase.bom))

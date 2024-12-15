@@ -1,105 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:padding="16dp">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Profile Toko"
-        android:fontFamily="@font/poppins_bold"
-        android:textSize="24sp"
-        android:textColor="@color/primary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profileImage"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/default_profile"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleText" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/nikLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:hint="NIK Pemilik Toko"
-        app:layout_constraintTop_toBottomOf="@id/profileImage">
+        android:padding="16dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nikInput"
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile Toko"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="24sp"
+            android:textColor="@color/primary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/default_profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleText" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nikLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:maxLength="16" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="32dp"
+            android:hint="NIK Pemilik Toko"
+            app:layout_constraintTop_toBottomOf="@id/profileImage">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/namaTokoLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="Nama Toko"
-        app:layout_constraintTop_toBottomOf="@id/nikLayout">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nikInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="16" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/namaTokoInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/namaTokoLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="16dp"
+            android:hint="Nama Toko"
+            app:layout_constraintTop_toBottomOf="@id/nikLayout">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/phoneLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="Nomor Handphone"
-        app:layout_constraintTop_toBottomOf="@id/namaTokoLayout">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/namaTokoInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/phoneInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/phoneLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="phone" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="16dp"
+            android:hint="Nomor Handphone"
+            app:layout_constraintTop_toBottomOf="@id/namaTokoLayout">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/alamatLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="Alamat Toko"
-        app:layout_constraintTop_toBottomOf="@id/phoneLayout">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/phoneInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/alamatInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/alamatLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:minLines="2" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="16dp"
+            android:hint="Alamat Toko"
+            app:layout_constraintTop_toBottomOf="@id/phoneLayout">
 
-    <Button
-        android:id="@+id/btnSimpan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Simpan"
-        android:textAllCaps="false"
-        app:layout_constraintTop_toBottomOf="@id/alamatLayout" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/alamatInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="2" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout> 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/jenisBarangLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Jenis Barang yang Dijual"
+            app:layout_constraintTop_toBottomOf="@id/alamatLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/jenisBarangInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="2" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/jenisBarangHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contoh: Pupuk, Bibit, Alat Pertanian"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/jenisBarangLayout"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <Button
+            android:id="@+id/btnSimpan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Simpan"
+            android:textAllCaps="false"
+            app:layout_constraintTop_toBottomOf="@id/jenisBarangHint" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView> 

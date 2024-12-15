@@ -11,5 +11,7 @@ data class User(
     val alamat: String = "",
     val photoUrl: String = "",
     val type: String = "",
-    val updatedAt: Long = System.currentTimeMillis()
+    val jenisBarang: String = "",
+    val createdAt: Long = 0,
+    val updatedAt: Long = 0
 )

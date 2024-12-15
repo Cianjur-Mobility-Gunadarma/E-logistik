@@ -77,6 +77,15 @@ class UsersFragment : Fragment() {
         
         // Pre-fill existing data
         dialogBinding.apply {
+            editTextPhone.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus && editTextPhone.text?.toString().isNullOrEmpty()) {
+                    editTextPhone.setText("62")
+                    editTextPhone.text?.let { editable ->
+                        editTextPhone.setSelection(editable.length)
+                    }
+                }
+            }
+            
             editTextNama.setText(user.nama)
             editTextNik.setText(user.nik)
             editTextPhone.setText(user.phone)

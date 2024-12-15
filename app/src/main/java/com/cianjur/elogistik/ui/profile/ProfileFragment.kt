@@ -19,6 +19,10 @@ import com.cianjur.elogistik.R
 import androidx.activity.OnBackPressedCallback
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.cianjur.elogistik.ui.LoginActivity
+import android.view.inputmethod.InputMethodManager
+import android.content.Context
+import android.view.inputmethod.EditorInfo
+
 
 class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
@@ -30,6 +34,7 @@ class ProfileFragment : Fragment() {
     private val PICK_IMAGE_REQUEST = 1
     private var isEditMode = false
     private var backPressedCallback: OnBackPressedCallback? = null
+    private val PICK_LOCATION_REQUEST = 1001
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -47,6 +52,15 @@ class ProfileFragment : Fragment() {
 
     private fun setupUI() {
         binding.apply {
+            phoneInput.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus && phoneInput.text?.toString().isNullOrEmpty()) {
+                    phoneInput.setText("62")
+                    phoneInput.text?.let { editable ->
+                        phoneInput.setSelection(editable.length)
+                    }
+                }
+            }
+
             profileImage.setOnClickListener {
                 if (isEditMode) openImagePicker()
             }
@@ -65,7 +79,46 @@ class ProfileFragment : Fragment() {
             logoutButton.setOnClickListener {
                 showLogoutConfirmation()
             }
+
+            // Tambahkan ini untuk menyembunyikan keyboard saat klik di luar input
+            root.setOnClickListener {
+                hideKeyboard()
+            }
+
+            // Tambahkan listener untuk setiap EditText
+            nikInput.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    hideKeyboard()
+                    true
+                } else false
+            }
+            
+            namaInput.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    hideKeyboard()
+                    true
+                } else false
+            }
+            
+            phoneInput.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    hideKeyboard()
+                    true
+                } else false
+            }
+            
+            alamatInput.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    hideKeyboard()
+                    true
+                } else false
+            }
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     private fun setEditMode(enabled: Boolean) {
@@ -75,6 +128,7 @@ class ProfileFragment : Fragment() {
             namaInput.isEnabled = enabled
             phoneInput.isEnabled = enabled
             alamatInput.isEnabled = enabled
+            jenisBarangInput.isEnabled = enabled
             profileImage.isClickable = enabled
             
             btnSimpan.text = if (enabled) "Simpan Perubahan" else "Edit Profil"
@@ -84,6 +138,7 @@ class ProfileFragment : Fragment() {
             namaInput.setBackgroundResource(if (enabled) R.drawable.edit_text_background else R.drawable.view_background)
             phoneInput.setBackgroundResource(if (enabled) R.drawable.edit_text_background else R.drawable.view_background)
             alamatInput.setBackgroundResource(if (enabled) R.drawable.edit_text_background else R.drawable.view_background)
+            jenisBarangInput.setBackgroundResource(if (enabled) R.drawable.edit_text_background else R.drawable.view_background)
         }
     }
 
@@ -100,6 +155,9 @@ class ProfileFragment : Fragment() {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data?.data != null) {
             selectedImageUri = data.data
             binding.profileImage.setImageURI(selectedImageUri)
+        } else if (requestCode == PICK_LOCATION_REQUEST && resultCode == Activity.RESULT_OK) {
+            val address = data?.getStringExtra("address")
+            binding.alamatInput.setText(address)
         }
     }
 
@@ -113,6 +171,7 @@ class ProfileFragment : Fragment() {
             namaInput.isEnabled = !isLoading
             phoneInput.isEnabled = !isLoading
             alamatInput.isEnabled = !isLoading
+            jenisBarangInput.isEnabled = !isLoading
         }
 
 
@@ -180,6 +239,10 @@ class ProfileFragment : Fragment() {
                     "updatedAt" to System.currentTimeMillis()
                 )
 
+                if (existingUser?.type == "toko") {
+                    updates["jenisBarang"] = binding.jenisBarangInput.text.toString()
+                }
+
                 if (photoUrl != null) {
                     updates["photoUrl"] = photoUrl
                 }
@@ -237,6 +300,15 @@ class ProfileFragment : Fragment() {
                     .into(profileImage)
             } else {
                 profileImage.setImageResource(R.drawable.default_profile)
+            }
+
+            if (user.type == "toko") {
+                jenisBarangLayout.visibility = View.VISIBLE
+                jenisBarangHint.visibility = View.VISIBLE
+                jenisBarangInput.setText(user.jenisBarang)
+            } else {
+                jenisBarangLayout.visibility = View.GONE
+                jenisBarangHint.visibility = View.GONE
             }
         }
     }

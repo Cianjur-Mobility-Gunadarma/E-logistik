@@ -3,6 +3,7 @@ package com.cianjur.elogistik.ui.detail
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,8 @@ class DetailPesananFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var db: FirebaseFirestore
     private var pesananId: String? = null
+    private var latitude: Double? = null
+    private var longitude: Double? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,9 +40,13 @@ class DetailPesananFragment : Fragment() {
         pesananId = arguments?.getString("pesananId")
         val isToko = arguments?.getBoolean("isToko") ?: false
         val isAdmin = arguments?.getBoolean("isAdmin") ?: false
-        
+
+        // Sembunyikan tombol update status secara default
+        binding.updateStatusButton.visibility = View.GONE
+
         loadPesananDetail()
-        
+        setupLihatLokasiButton()
+
         when {
             isAdmin -> setupAdminView()
             isToko -> setupTokoView()
@@ -48,88 +55,165 @@ class DetailPesananFragment : Fragment() {
     }
 
     private fun setupTokoView() {
-        // Sembunyikan semua tombol petani
-        binding.editButton.visibility = View.GONE
-        binding.batalkanButton.visibility = View.GONE
-        binding.hubungiButton.visibility = View.GONE
-
-        // Load status pesanan
-        pesananId?.let { id ->
-            db.collection("pesanan").document(id)
-                .get()
-                .addOnSuccessListener { document ->
-                    val status = document.getString("status") ?: ""
-                    
-                    // Tampilkan tombol update status hanya jika status bukan dibatalkan atau selesai
-                    binding.updateStatusButton.visibility = when (status) {
-                        "dibatalkan", "selesai" -> View.GONE
-                        else -> View.VISIBLE
-                    }
+        binding.apply {
+            // Sembunyikan tombol yang tidak diperlukan toko
+            editButton.visibility = View.GONE
+            
+            // Ubah text untuk menunjukkan ini adalah alamat petani
+            alamatTokoLabel.text = "Alamat Petani:"
+            
+            // Tampilkan tombol hubungi petani
+            hubungiButton.text = "Hubungi petani melalui WA"
+            hubungiButton.visibility = View.VISIBLE
+            
+            // Setup tombol batalkan untuk toko
+            batalkanButton.visibility = View.VISIBLE
+            batalkanButton.text = "Batalkan Pesanan"
+            batalkanButton.setOnClickListener {
+                pesananId?.let { id ->
+                    db.collection("pesanan").document(id)
+                        .get()
+                        .addOnSuccessListener { document ->
+                            val status = document.getString("status") ?: ""
+                            
+                            // Bisa dibatalkan jika status menunggu, diproses, atau dikirim
+                            if (status in listOf("menunggu", "diproses", "dikirim")) {
+                                MaterialAlertDialogBuilder(requireContext())
+                                    .setTitle("Batalkan Pesanan")
+                                    .setMessage("Apakah Anda yakin ingin membatalkan pesanan ini?")
+                                    .setPositiveButton("Ya") { _, _ ->
+                                        updatePesananStatus("dibatalkan")
+                                    }
+                                    .setNegativeButton("Tidak", null)
+                                    .show()
+                            } else {
+                                Toast.makeText(context, 
+                                    "Pesanan tidak dapat dibatalkan", 
+                                    Toast.LENGTH_SHORT).show()
+                            }
+                        }
                 }
+            }
+            
+            // Update onClickListener untuk hubungi petani
+            hubungiButton.setOnClickListener {
+                pesananId?.let { id ->
+                    db.collection("pesanan")
+                        .document(id)
+                        .get()
+                        .addOnSuccessListener { document ->
+                            val petaniId = document.getString("petaniId")
+                            if (petaniId != null) {
+                                db.collection("user")
+                                    .document(petaniId)
+                                    .get()
+                                    .addOnSuccessListener { petaniDoc ->
+                                        val phone = petaniDoc.getString("phone")
+                                        if (phone != null) {
+                                            openWhatsApp(phone)
+                                        }
+                                    }
+                            }
+                        }
+                }
+            }
+
+            // Setup tombol update status
+            setupUpdateStatusButton()
+            
+            // Update visibility tombol berdasarkan status
+            pesananId?.let { id ->
+                db.collection("pesanan").document(id)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        val status = document.getString("status") ?: ""
+                        
+                        when (status) {
+                            "menunggu", "diproses", "dikirim" -> {
+                                updateStatusButton.visibility = View.VISIBLE
+                                batalkanButton.visibility = View.VISIBLE
+                            }
+                            "dibatalkan", "selesai" -> {
+                                updateStatusButton.visibility = View.GONE
+                                batalkanButton.visibility = View.GONE
+                            }
+                            else -> {
+                                updateStatusButton.visibility = View.VISIBLE
+                                batalkanButton.visibility = View.VISIBLE
+                            }
+                        }
+                    }
+            }
         }
-        
-        setupUpdateStatusButton()
     }
 
     private fun setupPetaniView() {
-        binding.updateStatusButton.visibility = View.GONE
-        
-        pesananId?.let { id ->
-            db.collection("pesanan").document(id)
-                .get()
-                .addOnSuccessListener { document ->
-                    val status = document.getString("status") ?: ""
-                    
-                    when (status) {
-                        "menunggu" -> {
-                            // Jika status masih menunggu, tampilkan semua tombol termasuk edit
-                            binding.hubungiButton.visibility = View.VISIBLE
-                            binding.batalkanButton.visibility = View.VISIBLE
-                            binding.editButton.visibility = View.VISIBLE
-                        }
-                        "dibatalkan" -> {
-                            binding.hubungiButton.visibility = View.GONE
-                            binding.batalkanButton.visibility = View.GONE
-                            binding.editButton.visibility = View.GONE
-                        }
-                        else -> {
-                            binding.hubungiButton.visibility = View.VISIBLE
-                            binding.batalkanButton.visibility = View.GONE
-                            binding.editButton.visibility = View.GONE
+        binding.apply {
+            // Pastikan tombol update status GONE untuk petani
+            updateStatusButton.visibility = View.GONE
+            
+            alamatTokoLabel.text = "Alamat Toko:"
+            hubungiButton.text = "Hubungi toko melalui WA"
+            
+            // Setup tombol lainnya untuk petani
+            pesananId?.let { id ->
+                db.collection("pesanan").document(id)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        val status = document.getString("status") ?: ""
+                        
+                        when (status) {
+                            "menunggu" -> {
+                                hubungiButton.visibility = View.VISIBLE
+                                batalkanButton.visibility = View.VISIBLE
+                                editButton.visibility = View.VISIBLE
+                            }
+                            "dibatalkan" -> {
+                                hubungiButton.visibility = View.GONE
+                                batalkanButton.visibility = View.GONE
+                                editButton.visibility = View.GONE
+                            }
+                            else -> {
+                                hubungiButton.visibility = View.VISIBLE
+                                batalkanButton.visibility = View.GONE
+                                editButton.visibility = View.GONE
+                            }
                         }
                     }
-                }
+            }
+            
+            setupHubungiButton()
+            setupBatalkanButton()
+            setupEditButton()
         }
-        
-        setupHubungiButton()
-        setupBatalkanButton()
-        setupEditButton()
     }
 
     private fun setupUpdateStatusButton() {
         binding.updateStatusButton.setOnClickListener {
-            // Ambil status saat ini
             pesananId?.let { id ->
                 db.collection("pesanan").document(id)
                     .get()
                     .addOnSuccessListener { document ->
                         val currentStatus = document.getString("status") ?: ""
                         
-                        // Tentukan opsi status yang bisa dipilih berdasarkan status saat ini
-                        val options = when (currentStatus) {
-                            "menunggu" -> arrayOf("diproses")
-                            "diproses" -> arrayOf("dikirim")
-                            "dikirim" -> arrayOf("selesai")
-                            else -> arrayOf() // Tidak ada opsi jika status sudah selesai/dibatalkan
+                        // Tentukan status berikutnya berdasarkan status saat ini
+                        val nextStatus = when (currentStatus) {
+                            "menunggu" -> "diproses"
+                            "diproses" -> "dikirim"
+                            "dikirim" -> "selesai"
+                            else -> ""
                         }
                         
-                        if (options.isNotEmpty()) {
+                        // Tampilkan dialog dengan status berikutnya
+                        if (nextStatus.isNotEmpty()) {
+                            val displayStatus = getStatusText(nextStatus)
                             MaterialAlertDialogBuilder(requireContext())
                                 .setTitle("Update Status Pesanan")
-                                .setItems(options) { _, which ->
-                                    val newStatus = options[which]
-                                    updatePesananStatus(newStatus)
+                                .setMessage("Ubah status menjadi \"$displayStatus\"?")
+                                .setPositiveButton("Ya") { _, _ ->
+                                    updatePesananStatus(nextStatus)
                                 }
+                                .setNegativeButton("Tidak", null)
                                 .show()
                         }
                     }
@@ -157,8 +241,19 @@ class DetailPesananFragment : Fragment() {
             db.collection("pesanan").document(id)
                 .get()
                 .addOnSuccessListener { document ->
-                    if (document != null && document.exists()) {
+                    if (document.exists()) {
                         updateUI(document)
+                        
+                        // Update visibility tombol update status hanya jika user adalah toko
+                        val isToko = arguments?.getBoolean("isToko") ?: false
+                        val isAdmin = arguments?.getBoolean("isAdmin") ?: false
+                        val currentStatus = document.getString("status") ?: ""
+                        
+                        binding.updateStatusButton.visibility = when {
+                            isAdmin -> View.VISIBLE
+                            isToko && canUpdateStatus(currentStatus) -> View.VISIBLE
+                            else -> View.GONE
+                        }
                     }
                 }
         }
@@ -166,12 +261,58 @@ class DetailPesananFragment : Fragment() {
 
     private fun updateUI(document: DocumentSnapshot) {
         binding.apply {
+            // Update judul sesuai dengan nama petani
+            titleText.text = document.getString("petaniNama") ?: "Petani"
+
+            // Update informasi lainnya seperti biasa
             tanggalText.text = document.getString("jadwal")
             alamatText.text = document.getString("lokasi")
-            barangText.text = document.getString("kebutuhan")
-            jumlahText.text = "${document.getLong("jumlah")} kg"
-            tokoText.text = document.getString("tokoNama")
-            statusText.text = "Status pesanan: ${document.getString("status")}"
+            petaniText.text = document.getString("petaniNama")
+
+            val petaniId = document.getString("petaniId")
+            val tokoNama = document.getString("tokoNama")
+            val isToko = arguments?.getBoolean("isToko") ?: false
+
+            // Ambil data petani
+            if (petaniId != null) {
+                db.collection("user")
+                    .document(petaniId)
+                    .get()
+                    .addOnSuccessListener { userDoc ->
+                        if (userDoc.exists()) {
+                            petaniText.text = userDoc.getString("nama")
+                            titleText.text = userDoc.getString("nama")
+
+                            // Jika user adalah toko, tampilkan alamat petani
+                            if (isToko) {
+                                alamatTokoText.text = userDoc.getString("alamat")
+                            }
+                        }
+                    }
+            }
+
+            // Ambil data toko
+            if (tokoNama != null) {
+                db.collection("user")
+                    .whereEqualTo("nama", tokoNama)
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        if (!documents.isEmpty) {
+                            val tokoDoc = documents.documents[0]
+                            tokoText.text = tokoDoc.getString("nama")
+
+                            // Jika user adalah petani, tampilkan alamat toko
+                            if (!isToko) {
+                                alamatTokoText.text = tokoDoc.getString("alamat")
+                            }
+                        }
+                    }
+            }
+
+            // Update data lainnya
+            barangText.text = getKebutuhanText(document)
+            val rawStatus = document.getString("status") ?: ""
+            statusText.text = getStatusText(rawStatus)
         }
     }
 
@@ -232,14 +373,29 @@ class DetailPesananFragment : Fragment() {
     private fun setupEditButton() {
         binding.editButton.setOnClickListener {
             pesananId?.let { id ->
-                val bundle = Bundle().apply {
-                    putString("pesananId", id)
-                    putBoolean("isEdit", true)
-                }
-                findNavController().navigate(
-                    R.id.navigation_home,
-                    bundle
-                )
+                // Ambil data pesanan terlebih dahulu
+                db.collection("pesanan").document(id)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document.exists()) {
+                            val bundle = Bundle().apply {
+                                putString("pesananId", id)
+                                putString("lokasi", document.getString("lokasi"))
+                                putString("tokoNama", document.getString("tokoNama"))
+                                putString("jadwal", document.getString("jadwal"))
+                                putString("pesan", document.getString("pesan"))
+                                putString("kebutuhanList", document.get("kebutuhanList").toString())
+                                putBoolean("isEdit", true)
+                            }
+                            findNavController().navigate(
+                                R.id.navigation_home,
+                                bundle
+                            )
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
         }
     }
@@ -252,19 +408,29 @@ class DetailPesananFragment : Fragment() {
             updateStatusButton.visibility = View.VISIBLE
             hubungiButton.visibility = View.VISIBLE
         }
-        
+
         // Setup tombol-tombol
         setupBatalkanButton()
         setupUpdateStatusButton()
         setupHubungiButton()
 
-        // Modifikasi update status untuk admin (bisa ke semua status)
+        // Khusus untuk admin, bisa update ke semua status
         binding.updateStatusButton.setOnClickListener {
-            val statusOptions = arrayOf("menunggu", "diproses", "dikirim", "selesai", "dibatalkan")
+            val statusList = listOf(
+                "menunggu" to "Menunggu konfirmasi toko",
+                "diproses" to "Sedang diproses toko",
+                "dikirim" to "Sedang dikirim",
+                "selesai" to "Pesanan selesai",
+                "dibatalkan" to "Pesanan dibatalkan"
+            )
+            
+            val displayOptions = statusList.map { it.second }.toTypedArray()
+            
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Update Status")
-                .setItems(statusOptions) { _, which ->
-                    updatePesananStatus(statusOptions[which])
+                .setItems(displayOptions) { _, which ->
+                    val newStatus = statusList[which].first
+                    updatePesananStatus(newStatus)
                 }
                 .show()
         }
@@ -289,6 +455,83 @@ class DetailPesananFragment : Fragment() {
                 }
                 .setNegativeButton("Tidak", null)
                 .show()
+        }
+    }
+
+    private fun setupLihatLokasiButton() {
+        binding.buttonLihatLokasi.setOnClickListener {
+            val alamat = if (arguments?.getBoolean("isToko") == true) {
+                binding.alamatText.text.toString() // Alamat pengiriman untuk toko
+            } else {
+                binding.alamatTokoText.text.toString() // Alamat toko untuk petani
+            }
+
+            if (alamat.isNotEmpty()) {
+                val mapsUrl = "https://www.google.com/maps/search/${Uri.encode(alamat)}"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(mapsUrl))
+                try {
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Tidak dapat membuka maps: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "Alamat tidak tersedia", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun loadPesananStatus() {
+        pesananId?.let { id ->
+            db.collection("pesanan").document(id)
+                .get()
+                .addOnSuccessListener { document ->
+                    val status = document.getString("status") ?: ""
+
+                    // Tampilkan tombol update status hanya jika status bukan dibatalkan atau selesai
+                    binding.updateStatusButton.visibility = when (status) {
+                        "dibatalkan", "selesai" -> View.GONE
+                        else -> View.VISIBLE
+                    }
+                }
+        }
+    }
+
+    private fun getKebutuhanText(document: DocumentSnapshot): String {
+        return try {
+            when (val kebutuhanData = document.get("kebutuhanList")) {
+                is List<*> -> {
+                    kebutuhanData.joinToString("\n") { item ->
+                        when (item) {
+                            is Map<*, *> -> "${item["nama"]}: ${item["jumlah"]}"
+                            is String -> item
+                            else -> item.toString()
+                        }
+                    }
+                }
+                is String -> kebutuhanData
+                else -> document.getString("kebutuhan") ?: ""
+            }
+        } catch (e: Exception) {
+            document.getString("kebutuhan") ?: ""
+        }
+    }
+
+    private fun getStatusText(status: String): String {
+        return when (status.lowercase()) {
+            "menunggu" -> "Menunggu konfirmasi toko"
+            "diproses" -> "Sedang diproses toko"
+            "dikirim" -> "Sedang dikirim"
+            "selesai" -> "Pesanan selesai"
+            "dibatalkan" -> "Pesanan dibatalkan"
+            else -> status
+        }
+    }
+
+    // Tambahkan fungsi untuk mengecek apakah status bisa diupdate
+    private fun canUpdateStatus(currentStatus: String): Boolean {
+        return when (currentStatus) {
+            "menunggu", "diproses", "dikirim" -> true
+            else -> false
         }
     }
 

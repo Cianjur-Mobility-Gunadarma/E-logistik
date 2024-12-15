@@ -20,13 +20,11 @@
         android:inputType="number"
         android:layout_marginTop="8dp" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/editTextPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nomor Telepon"
-        android:inputType="phone"
-        android:layout_marginTop="8dp" />
+        android:inputType="phone" />
 
     <EditText
         android:id="@+id/editTextAlamat"

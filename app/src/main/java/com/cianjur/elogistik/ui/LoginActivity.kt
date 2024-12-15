@@ -2,6 +2,8 @@ package com.cianjur.elogistik.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.cianjur.elogistik.AdminActivity
@@ -36,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
         binding.logoImage.startAnimation(slideAnimation)
 
         auth = Firebase.auth
+        
         db = Firebase.firestore
 
         val availability = GoogleApiAvailability.getInstance()
@@ -59,19 +62,25 @@ class LoginActivity : AppCompatActivity() {
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener { authResult ->
                         authResult.user?.uid?.let { userId ->
-                            checkUserTypeAndRedirect(userId)
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                checkUserTypeAndRedirect(userId)
+                            }, 500)
                         } ?: run {
                             setLoading(false)
-                            Toast.makeText(this, "Error: User ID tidak ditemukan", Toast.LENGTH_SHORT).show()
+                            showError("Error: User ID tidak ditemukan")
                         }
                     }
                     .addOnFailureListener { e ->
                         setLoading(false)
-                        Toast.makeText(this, "Login gagal: ${e.message}", Toast.LENGTH_SHORT).show()
+                        showError("Login gagal: ${e.message}")
                     }
             } else {
-                Toast.makeText(this, "Mohon isi email dan password", Toast.LENGTH_SHORT).show()
+                showError("Mohon isi email dan password")
             }
+        }
+
+        binding.registerButton.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
@@ -84,30 +93,16 @@ class LoginActivity : AppCompatActivity() {
                 if (document.exists()) {
                     try {
                         when (document.getString("type")) {
-                            "petani" -> {
-                                startActivity(Intent(this, MainActivity::class.java))
-                                finish()
-                            }
-                            "toko" -> {
-                                startActivity(Intent(this, TokoActivity::class.java))
-                                finish()
-                            }
-                            "admin" -> {
-                                auth.currentUser?.getIdToken(true)?.addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        startActivity(Intent(this, AdminActivity::class.java))
-                                        finish()
-                                    } else {
-                                        showError("Gagal memperbarui sesi. Silakan login kembali.")
-                                        auth.signOut()
-                                    }
-                                }
-                            }
+                            "petani" -> startActivity(Intent(this, MainActivity::class.java))
+                            "toko" -> startActivity(Intent(this, TokoActivity::class.java))
+                            "admin" -> startActivity(Intent(this, AdminActivity::class.java))
                             else -> {
                                 showError("Tipe user tidak valid")
                                 auth.signOut()
+                                return@addOnSuccessListener
                             }
                         }
+                        finish()
                     } catch (e: Exception) {
                         showError("Error: ${e.message}")
                         auth.signOut()
